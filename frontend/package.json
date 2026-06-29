@@ -1,0 +1,26 @@
+{
+  "name": "arrcal-frontend",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:demo": "VITE_DEMO=true vite build --base=/arrcal/",
+    "preview": "vite preview",
+    "preview:demo": "VITE_DEMO=true vite build --base=/ && vite preview"
+  },
+  "dependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.1.2",
+    "@tailwindcss/vite": "^4.3.1",
+    "@tanstack/svelte-query": "^6.1.36",
+    "daisyui": "^5.6.6",
+    "svelte": "^5.56.4",
+    "tailwindcss": "^4.3.1",
+    "vite": "^8.1.0"
+  },
+  "devDependencies": {
+    "svelte-check": "^4.7.1",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "arrcal",
+  "description": "Radarr + Sonarr unified calendar dashboard",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently --names \"php,svelte\" --prefix-colors \"yellow,cyan\" \"pnpm dev:php\" \"pnpm dev:frontend\"",
+    "dev:php": "nodemon",
+    "dev:frontend": "pnpm --filter arrcal-frontend dev",
+    "dev:js": "pnpm dev:frontend",
+    "test": "vendor/bin/pest",
+    "postinstall": "composer install",
+    "build:frontend": "pnpm --filter arrcal-frontend build && cp -r frontend/dist/* public/",
+    "build:demo": "pnpm --filter arrcal-frontend build:demo && cp -r frontend/dist/* public/",
+    "bump": "bumpp --commit --no-tag"
+  },
+  "devDependencies": {
+    "bumpp": "^11.1.0",
+    "concurrently": "^9.2.3",
+    "nodemon": "^3.1.0"
+  }
+}

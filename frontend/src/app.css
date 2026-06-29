@@ -1,0 +1,10 @@
+@import url('https://api.fonts.coollabs.io/css2?family=Montserrat:wght@100..900&display=swap');
+
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: dracula --default;
+}
+
+@theme {
+  --font-sans: 'Montserrat', sans-serif;
+}

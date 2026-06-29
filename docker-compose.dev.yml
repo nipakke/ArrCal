@@ -1,0 +1,70 @@
+# ArrCal Development Environment
+# Starts Radarr + Sonarr for local API development.
+# The ArrCal PHP app itself runs natively on the host (php bin/server).
+#
+# Quick start:
+#   docker compose -f docker-compose.dev.yml up -d
+#
+# API keys are pre-set via RADARR__AUTH__APIKEY / SONARR__AUTH__APIKEY env vars.
+# No need to open the UI to fetch keys — they match .env values.
+
+services:
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: arrcal-radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+      - RADARR__AUTH__APIKEY=arrcal-radarr-key-2026
+    volumes:
+      - ./docker/radarr/config:/config
+      - ./docker/media/movies:/media/movies
+    ports:
+      - "7878:7878"
+    restart: unless-stopped
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: arrcal-sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+      - SONARR__AUTH__APIKEY=arrcal-sonarr-key-2026
+    volumes:
+      - ./docker/sonarr/config:/config
+      - ./docker/media/tv:/media/tv
+    ports:
+      - "8989:8989"
+    restart: unless-stopped
+
+  radarr-4k:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: arrcal-radarr-4k
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+      - RADARR__AUTH__APIKEY=arrcal-radarr-4k-key-2026
+    volumes:
+      - ./docker/radarr-4k/config:/config
+      - ./docker/media/movies:/media/movies
+    ports:
+      - "7879:7878"
+    restart: unless-stopped
+
+  sonarr-anime:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: arrcal-sonarr-anime
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+      - SONARR__AUTH__APIKEY=arrcal-sonarr-anime-key-2026
+    volumes:
+      - ./docker/sonarr-anime/config:/config
+      - ./docker/media/tv:/media/tv
+    ports:
+      - "8990:8989"
+    restart: unless-stopped

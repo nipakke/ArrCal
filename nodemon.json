@@ -1,0 +1,11 @@
+{
+  "watch": [
+    "Kernel",
+    "Handler",
+    "Service",
+    "Domain",
+    ".env"
+  ],
+  "ext": "php,env",
+  "exec": "php bin/server"
+}

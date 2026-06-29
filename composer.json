@@ -1,0 +1,41 @@
+{
+  "name": "arrcal/backend",
+  "description": "Radarr + Sonarr unified calendar dashboard",
+  "type": "project",
+  "license": "MIT",
+  "require": {
+    "php": "^8.5",
+    "nikic/fast-route": "^1.3",
+    "react/http": "^1.9",
+    "react/promise": "^3.1",
+    "react/promise-timer": "^1.11",
+    "react/stream": "^1.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "ArrCal\\": ""
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+    "require-dev": {
+        "laravel/pint": "^1.29",
+        "pestphp/pest": "^3.0",
+        "php-parallel-lint/php-parallel-lint": "^1.4",
+        "phpstan/phpstan": "^2.2"
+    },
+    "scripts": {
+        "format": "pint",
+        "lint": [
+            "pint --test",
+            "parallel-lint Domain/ Kernel/ Handler/ Service/ bin/server",
+            "phpstan analyse --configuration=phpstan.neon"
+        ]
+    }
+}

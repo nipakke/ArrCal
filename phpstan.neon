@@ -1,0 +1,9 @@
+parameters:
+    level: 5
+    paths:
+        - Domain/
+        - Handler/
+        - Kernel/
+        - Service/
+        - bin/server
+    phpVersion: 80500

@@ -1,0 +1,44 @@
+# Binaries
+/dist/
+*.exe
+
+# IDE
+.idea/
+*.swp
+*.swo
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+.env.backup
+.env.production
+
+# Dependencies
+node_modules/
+package-lock.json
+/vendor/
+
+# PHP
+.phpunit.cache/
+.phpunit.result.cache
+
+# Docker dev data
+/docker/radarr/
+/docker/radarr-4k/
+/docker/sonarr/
+/docker/sonarr-anime/
+/docker/media/*
+
+# Cache
+/cache/
+
+# Generated assets
+/public/
+
+# OpenCode temp sessions
+.tmp/
