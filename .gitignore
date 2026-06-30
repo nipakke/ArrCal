@@ -34,6 +34,10 @@ package-lock.json
 /docker/sonarr-anime/
 /docker/media/*
 
+# Docker Slim artifacts
+slim.report.json
+*.slim-*
+
 # Cache
 /cache/
 
