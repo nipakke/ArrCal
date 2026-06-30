@@ -4,10 +4,10 @@
   rel="noopener noreferrer"
   class="flex flex-col px-1.5 py-1 border-l-[3px] no-underline {bgClass} {borderClass} hover:brightness-125 transition-all duration-150"
 >
-  <span class="text-[13px] truncate leading-tight" title={displayTitleTooltip}>
+  <span class="text-sm truncate leading-tight" title={displayTitleTooltip}>
     {displayTitle}
   </span>
-  <span class="text-[11px] opacity-70 truncate leading-tight">{detailLine}</span>
+  <span class="text-xs opacity-70 truncate leading-tight">{detailLine}</span>
 </a>
 
 <script lang="ts">

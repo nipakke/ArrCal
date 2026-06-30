@@ -105,9 +105,10 @@
 
 <div class="divide-y divide-base-300">
   {#each activeDays as day}
-    <section class="py-4 first:pt-0 last:pb-0">
+    {@const isToday = day.date === dateToday()}
+    <section class="py-4 first:pt-0 last:pb-0 {isToday ? 'bg-primary/[0.07] -mx-4 md:-mx-8 px-4 md:px-8 rounded-none' : ''}">
       <!-- Date header -->
-      <h3 class="text-sm font-semibold uppercase tracking-wider opacity-60 mb-3 px-1">
+      <h3 class="text-sm font-semibold uppercase tracking-wider mb-3 px-1 {isToday ? 'text-primary' : 'opacity-60'}">
         {formatDateHeader(day.date)}
       </h3>
 
@@ -122,11 +123,11 @@
           >
             <!-- Title column -->
             <div class="flex-1 min-w-0">
-              <span class="text-sm font-medium truncate block">
+              <span class="text-base font-medium truncate block">
                 {seriesTitle(entry)}
               </span>
               {#if entry.type === 'episode' && entry.title}
-                <span class="text-xs opacity-70 truncate block">
+                <span class="text-sm opacity-70 truncate block">
                   {entry.title}
                 </span>
               {/if}
@@ -135,22 +136,22 @@
             <!-- Detail column (right-aligned) -->
             <div class="flex items-center gap-3 shrink-0">
               {#if episodeTag(entry)}
-                <span class="text-xs opacity-70">
+                <span class="text-sm opacity-70">
                   {episodeTag(entry)}
                 </span>
               {/if}
               {#if releaseType(entry)}
-                <span class="text-xs opacity-70">
+                <span class="text-sm opacity-70">
                   {releaseType(entry)}
                 </span>
               {/if}
               {#if entry.instanceLabel}
-                <span class="text-xs opacity-50">
+                <span class="text-sm opacity-50">
                   {entry.instanceLabel}
                 </span>
               {/if}
               {#if formatAirTime(entry)}
-                <span class="text-xs opacity-70">
+                <span class="text-sm opacity-70">
                   {formatAirTime(entry)}
                 </span>
               {/if}
