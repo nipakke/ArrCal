@@ -15,6 +15,11 @@ namespace ArrCal\Service;
  * stopping at the first gap (e.g. if RADARR_2_URL exists but RADARR_3_URL does
  * not, only instances 1 and 2 are produced).
  *
+ * Each instance supports an optional public URL ({PREFIX}_PUBLIC_URL) that is
+ * exposed to the frontend for clickable links. If not set, it falls back to the
+ * internal URL ({PREFIX}_URL). This allows deployments where the internal
+ * container name differs from the externally-accessible hostname.
+ *
  * Each instance is validated: URLs must be parseable with a host, and API keys
  * must be present. Invalid or incomplete configs are returned with enabled=false
  * and a descriptive error — no exceptions are thrown for missing configuration.
@@ -25,10 +30,10 @@ namespace ArrCal\Service;
  */
 final readonly class InstanceConfig
 {
-    /** @var list<array{id: string, url: string, apiKey: ?string, label: ?string, enabled: bool, error: ?string}> */
+    /** @var list<array{id: string, url: string, publicUrl: string, apiKey: ?string, label: ?string, enabled: bool, error: ?string}> */
     private array $radarrInstances;
 
-    /** @var list<array{id: string, url: string, apiKey: ?string, label: ?string, enabled: bool, error: ?string}> */
+    /** @var list<array{id: string, url: string, publicUrl: string, apiKey: ?string, label: ?string, enabled: bool, error: ?string}> */
     private array $sonarrInstances;
 
     /**
@@ -67,8 +72,12 @@ final readonly class InstanceConfig
      * Additional instances come from numbered vars ({PREFIX}_2_URL, etc.),
      * stopping at the first gap.
      *
+     * Each instance may also have a {PREFIX}_PUBLIC_URL (or {PREFIX}_{N}_PUBLIC_URL)
+     * for the externally-accessible URL exposed to the frontend. Falls back to
+     * the internal URL if not set.
+     *
      * @param  callable(string): ?string  $reader
-     * @return list<array{id: string, url: string, apiKey: ?string, label: ?string, enabled: bool, error: ?string}>
+     * @return list<array{id: string, url: string, publicUrl: string, apiKey: ?string, label: ?string, enabled: bool, error: ?string}>
      */
     private function parseInstances(string $prefix, callable $reader): array
     {
@@ -82,6 +91,7 @@ final readonly class InstanceConfig
             $instances[] = $this->buildInstance(
                 id: "{$serviceId}-1",
                 url: $url,
+                publicUrl: $reader("{$prefix}_PUBLIC_URL"),
                 apiKey: $reader("{$prefix}_API_KEY"),
                 label: $reader("{$prefix}_LABEL"),
                 serviceName: $prefix,
@@ -100,6 +110,7 @@ final readonly class InstanceConfig
             $instances[] = $this->buildInstance(
                 id: "{$serviceId}-{$n}",
                 url: $url,
+                publicUrl: $reader("{$prefix}_{$n}_PUBLIC_URL"),
                 apiKey: $reader("{$prefix}_{$n}_API_KEY"),
                 label: $reader("{$prefix}_{$n}_LABEL"),
                 serviceName: $prefix,
@@ -117,16 +128,24 @@ final readonly class InstanceConfig
      * Invalid or incomplete configs are returned with enabled=false and a
      * descriptive error message — callers handle graceful degradation.
      *
-     * @return array{id: string, url: string, apiKey: ?string, label: ?string, enabled: bool, error: ?string}
+     * The public URL defaults to the internal URL if not explicitly set.
+     *
+     * @return array{id: string, url: string, publicUrl: string, apiKey: ?string, label: ?string, enabled: bool, error: ?string}
      */
     private function buildInstance(
         string $id,
         string $url,
+        ?string $publicUrl,
         ?string $apiKey,
         ?string $label,
         string $serviceName,
     ): array {
         $trimmedUrl = \rtrim($url, '/');
+
+        // Resolve public URL: explicit value, or fall back to internal URL
+        $publicUrl = $publicUrl !== null && $publicUrl !== ''
+            ? \rtrim($publicUrl, '/')
+            : $trimmedUrl;
 
         // Validate the URL is parseable and has a host
         $parts = \parse_url($trimmedUrl);
@@ -135,6 +154,7 @@ final readonly class InstanceConfig
             return [
                 'id' => $id,
                 'url' => $trimmedUrl,
+                'publicUrl' => $publicUrl,
                 'apiKey' => null,
                 'label' => $label,
                 'enabled' => false,
@@ -147,6 +167,7 @@ final readonly class InstanceConfig
             return [
                 'id' => $id,
                 'url' => $trimmedUrl,
+                'publicUrl' => $publicUrl,
                 'apiKey' => null,
                 'label' => $label,
                 'enabled' => false,
@@ -158,6 +179,7 @@ final readonly class InstanceConfig
         return [
             'id' => $id,
             'url' => $trimmedUrl,
+            'publicUrl' => $publicUrl,
             'apiKey' => $apiKey,
             'label' => $label,
             'enabled' => true,
@@ -170,7 +192,7 @@ final readonly class InstanceConfig
      *
      * Always returns an array (may be empty if no Radarr instances are configured).
      *
-     * @return list<array{id: string, url: string, apiKey: ?string, label: ?string, enabled: bool, error: ?string}>
+     * @return list<array{id: string, url: string, publicUrl: string, apiKey: ?string, label: ?string, enabled: bool, error: ?string}>
      */
     public function getRadarrInstances(): array
     {
@@ -182,7 +204,7 @@ final readonly class InstanceConfig
      *
      * Always returns an array (may be empty if no Sonarr instances are configured).
      *
-     * @return list<array{id: string, url: string, apiKey: ?string, label: ?string, enabled: bool, error: ?string}>
+     * @return list<array{id: string, url: string, publicUrl: string, apiKey: ?string, label: ?string, enabled: bool, error: ?string}>
      */
     public function getSonarrInstances(): array
     {

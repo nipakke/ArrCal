@@ -51,18 +51,33 @@ Add Radarr and Sonarr as sibling services or point to existing instances.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `RADARR_URL` | — | Radarr instance URL (e.g. `http://localhost:7878`) |
+| `RADARR_URL` | — | Radarr instance URL for API calls (e.g. `http://radarr:7878`) |
+| `RADARR_PUBLIC_URL` | `RADARR_URL` | Public URL for clickable links; use when internal != external URL |
 | `RADARR_API_KEY` | — | Radarr API key |
-| `SONARR_URL` | — | Sonarr instance URL (e.g. `http://localhost:8989`) |
+| `SONARR_URL` | — | Sonarr instance URL for API calls (e.g. `http://sonarr:8989`) |
+| `SONARR_PUBLIC_URL` | `SONARR_URL` | Public URL for clickable links; use when internal != external URL |
 | `SONARR_API_KEY` | — | Sonarr API key |
 | `CACHE_TTL` | `300` | Server-side cache TTL in seconds |
 | `APP_ENV` | `production` | `local` for dev mode |
 | `PORT` | `80` | HTTP server port (`8080` for local dev) |
 | `TRUST_PROXY` | `disabled` | Proxy trust mode (`auto`, `1`, `cloudflare`, `traefik`) |
 
+### Public vs Private URLs
+
+In containerised or proxied setups, the URL ArrCal uses to reach the *arr API (e.g. `http://radarr:7878`) may differ from the URL users should open in their browser (e.g. `https://radarr.example.com`). Set `{SERVICE}_PUBLIC_URL` when they differ:
+
+```bash
+# Internal: ArrCal uses this for API calls
+RADARR_URL=http://radarr:7878
+# Public: sent to the frontend for clickable links
+RADARR_PUBLIC_URL=https://radarr.example.com
+```
+
+When `PUBLIC_URL` is not set, it defaults to the internal `URL` — fully backward compatible.
+
 ### Multi-Instance
 
-Use numbered variables for multiple Radarr or Sonarr instances:
+Use numbered variables for multiple Radarr or Sonarr instances. Each also supports an optional `PUBLIC_URL`:
 
 ```
 RADARR_URL=http://localhost:7878
@@ -70,12 +85,14 @@ RADARR_API_KEY=key1
 RADARR_2_URL=http://localhost:7879
 RADARR_2_API_KEY=key2
 RADARR_2_LABEL=4K Movies
+RADARR_2_PUBLIC_URL=https://radarr-4k.example.com
 
 SONARR_URL=http://localhost:8989
 SONARR_API_KEY=key1
 SONARR_2_URL=http://localhost:8990
 SONARR_2_API_KEY=key2
 SONARR_2_LABEL=Anime
+SONARR_2_PUBLIC_URL=https://sonarr-anime.example.com
 ```
 
 ---

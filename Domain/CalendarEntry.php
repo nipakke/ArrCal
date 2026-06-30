@@ -32,14 +32,14 @@ final readonly class CalendarEntry
      * Create a CalendarEntry from a Radarr MovieResource response.
      *
      * Maps the Radarr status fields to the unified MediaStatus enum.
+     * The $publicUrl is used to construct clickable links to the media item
+     * in the *arr web UI. This may differ from the internal API URL.
      *
-     * @param  array<string, mixed>  $movie  Raw MovieResource array from Radarr API
-     * @param  string  $date  Calendar date to associate this entry with
-     */
-    /**
      * @param  array<string, mixed>  $movie  Raw MovieResource from Radarr API
+     * @param  string  $date  Calendar date to associate this entry with
+     * @param  string  $publicUrl  Public URL for clickable links (may differ from internal API URL)
      */
-    public static function fromRadarrResponse(array $movie, string $date, string $baseUrl = '', ?string $releaseType = null, ?string $instanceId = null, ?string $instanceLabel = null): self
+    public static function fromRadarrResponse(array $movie, string $date, string $publicUrl = '', ?string $releaseType = null, ?string $instanceId = null, ?string $instanceLabel = null): self
     {
         $monitored = (bool) ($movie['monitored'] ?? false);
         $hasFile = (bool) ($movie['hasFile'] ?? false);
@@ -55,7 +55,7 @@ final readonly class CalendarEntry
         };
 
         $slug = $movie['titleSlug'] ?? $movie['id'] ?? null;
-        $url = $slug !== null ? "{$baseUrl}/movie/{$slug}" : null;
+        $url = $slug !== null ? "{$publicUrl}/movie/{$slug}" : null;
 
         return new self(
             date: new \DateTimeImmutable($date),
@@ -82,15 +82,16 @@ final readonly class CalendarEntry
      *
      * Computes the hasFile flag from episodeFileId, and compares airDateUtc
      * against the current time for upcoming status detection.
+     * The $publicUrl is used to construct clickable links to the media item
+     * in the *arr web UI. This may differ from the internal API URL.
      *
-     * @param  array<string, mixed>  $episode  Raw EpisodeResource array from Sonarr API
+     * @param  array<string, mixed>  $episode  Raw EpisodeResource from Sonarr API
      * @param  string  $date  Calendar date to associate this entry with
-     */
-    /**
+     * @param  string  $publicUrl  Public URL for clickable links
      * @param  array<int, string>  $seriesSlugs  Lookup map: seriesId → titleSlug
      * @param  array<int, string>  $seriesTitles  Lookup map: seriesId → series title
      */
-    public static function fromSonarrResponse(array $episode, string $date, string $baseUrl = '', array $seriesSlugs = [], array $seriesTitles = [], ?string $instanceId = null, ?string $instanceLabel = null): self
+    public static function fromSonarrResponse(array $episode, string $date, string $publicUrl = '', array $seriesSlugs = [], array $seriesTitles = [], ?string $instanceId = null, ?string $instanceLabel = null): self
     {
         $monitored = (bool) ($episode['monitored'] ?? false);
         $hasFile = ($episode['episodeFileId'] ?? 0) > 0;
@@ -108,7 +109,7 @@ final readonly class CalendarEntry
         // the full series list lookup (fetched separately from /api/v3/series).
         $seriesId = $episode['seriesId'] ?? $series['id'] ?? null;
         $slug = $series['titleSlug'] ?? $series['slug'] ?? ($seriesId !== null ? ($seriesSlugs[(int) $seriesId] ?? null) : null);
-        $url = $slug !== null ? "{$baseUrl}/series/{$slug}" : null;
+        $url = $slug !== null ? "{$publicUrl}/series/{$slug}" : null;
 
         return new self(
             date: new \DateTimeImmutable($date),

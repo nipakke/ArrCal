@@ -179,6 +179,7 @@ final class ServerKernel
                 $cfg['url'],
                 $cfg['apiKey'] ?? '',
                 $cfg['label'] ?? null,
+                publicUrl: $cfg['publicUrl'],
             );
         }
 
@@ -190,6 +191,7 @@ final class ServerKernel
                 $cfg['url'],
                 $cfg['apiKey'] ?? '',
                 $cfg['label'] ?? null,
+                publicUrl: $cfg['publicUrl'],
             );
         }
 
@@ -206,7 +208,7 @@ final class ServerKernel
                     'id' => $r->getId(),
                     'label' => $r->getLabel(),
                     'enabled' => $r->isEnabled(),
-                    'url' => $r->getBaseUrl(),
+                    'url' => $r->getPublicUrl(),
                     'error' => $r->getError(),
                 ],
                 $radarrServices,
@@ -216,7 +218,7 @@ final class ServerKernel
                     'id' => $s->getId(),
                     'label' => $s->getLabel(),
                     'enabled' => $s->isEnabled(),
-                    'url' => $s->getBaseUrl(),
+                    'url' => $s->getPublicUrl(),
                     'error' => $s->getError(),
                 ],
                 $sonarrServices,

@@ -25,26 +25,36 @@ final class RadarrService
 {
     private readonly ?string $baseUrl;
 
+    private readonly ?string $publicUrl;
+
     private readonly ?string $apiKey;
 
     private readonly bool $enabled;
 
     private readonly ?string $error;
 
+    /**
+     * @param  string  $url  Internal URL used for API calls (e.g. http://radarr:7878)
+     * @param  string|null  $publicUrl  Public URL exposed to the frontend for clickable links.
+     *                                  Falls back to $url if not set.
+     */
     public function __construct(
         private readonly Browser $browser,
         private readonly string $id,
         string $url,
         string $apiKey,
         private readonly ?string $label = null,
+        ?string $publicUrl = null,
     ) {
         if ($url === '') {
             $this->baseUrl = null;
+            $this->publicUrl = null;
             $this->apiKey = null;
             $this->enabled = false;
             $this->error = null;
         } elseif ($apiKey === '') {
             $this->baseUrl = \rtrim($url, '/');
+            $this->publicUrl = $this->resolvePublicUrl($this->baseUrl, $publicUrl);
             $this->apiKey = null;
             $this->enabled = false;
             $this->error = 'Radarr API key is missing';
@@ -55,15 +65,28 @@ final class RadarrService
             $parts = \parse_url($this->baseUrl);
 
             if ($parts === false || ! isset($parts['host']) || $parts['host'] === '') {
+                $this->publicUrl = null;
                 $this->apiKey = null;
                 $this->enabled = false;
                 $this->error = 'Invalid Radarr URL: '.$url;
             } else {
+                $this->publicUrl = $this->resolvePublicUrl($this->baseUrl, $publicUrl);
                 $this->apiKey = $apiKey;
                 $this->enabled = true;
                 $this->error = null;
             }
         }
+    }
+
+    /**
+     * Resolve the public URL: use the explicit value if provided, or fall back
+     * to the internal base URL.
+     */
+    private function resolvePublicUrl(string $baseUrl, ?string $publicUrl): string
+    {
+        return $publicUrl !== null && $publicUrl !== ''
+            ? \rtrim($publicUrl, '/')
+            : $baseUrl;
     }
 
     /**
@@ -187,9 +210,21 @@ final class RadarrService
 
     /**
      * Return the configured Radarr base URL, or null if not configured.
+     *
+     * This is the internal URL used for API calls.
      */
     public function getBaseUrl(): ?string
     {
         return $this->baseUrl;
+    }
+
+    /**
+     * Return the public URL exposed to the frontend for clickable links.
+     *
+     * Falls back to the internal base URL if no explicit public URL was set.
+     */
+    public function getPublicUrl(): ?string
+    {
+        return $this->publicUrl;
     }
 }

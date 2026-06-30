@@ -92,6 +92,7 @@ final class CalendarAggregator
             'instanceLabel' => $instanceLabel,
             'isEnabled' => $instance->isEnabled(),
             'baseUrl' => $instance->getBaseUrl(),
+            'publicUrl' => $instance->getPublicUrl(),
             'configError' => $instance->getError(),
             'fetchError' => null,
             'data' => [],
@@ -143,6 +144,7 @@ final class CalendarAggregator
             'instanceLabel' => $instanceLabel,
             'isEnabled' => $instance->isEnabled(),
             'baseUrl' => $instance->getBaseUrl(),
+            'publicUrl' => $instance->getPublicUrl(),
             'configError' => $instance->getError(),
             'calendarError' => null,
             'seriesError' => null,
@@ -216,7 +218,7 @@ final class CalendarAggregator
                     $entries,
                     $this->transformRadarrEntries(
                         $result['data'],
-                        (string) ($result['baseUrl'] ?? ''),
+                        (string) ($result['publicUrl'] ?? $result['baseUrl'] ?? ''),
                         $result['instanceId'],
                         $result['instanceLabel'],
                     ),
@@ -245,7 +247,7 @@ final class CalendarAggregator
                     $entries,
                     $this->transformSonarrEntries(
                         $result['data'],
-                        (string) ($result['baseUrl'] ?? ''),
+                        (string) ($result['publicUrl'] ?? $result['baseUrl'] ?? ''),
                         $seriesSlugs,
                         $seriesTitles,
                         $result['instanceId'],
@@ -261,7 +263,10 @@ final class CalendarAggregator
     /**
      * Extract a Radarr service-status object from an instance result.
      *
-     * @param  array{instanceId: string, instanceLabel: string|null, isEnabled: bool, baseUrl: string|null, configError: string|null, fetchError: string|null}  $result
+     * The `url` field exposed to the frontend is the public URL (or falls back
+     * to the internal URL if no public URL was configured).
+     *
+     * @param  array{instanceId: string, instanceLabel: string|null, isEnabled: bool, baseUrl: string|null, publicUrl: string|null, configError: string|null, fetchError: string|null}  $result
      * @return array{id: string, label: string|null, enabled: bool, url: string|null, error: string|null}
      */
     private function buildRadarrStatus(array $result): array
@@ -270,7 +275,7 @@ final class CalendarAggregator
             'id' => $result['instanceId'],
             'label' => $result['instanceLabel'],
             'enabled' => $result['isEnabled'],
-            'url' => $result['baseUrl'],
+            'url' => $result['publicUrl'] ?? $result['baseUrl'],
             'error' => $result['fetchError'] ?? $result['configError'],
         ];
     }
@@ -278,7 +283,10 @@ final class CalendarAggregator
     /**
      * Extract a Sonarr service-status object from an instance result.
      *
-     * @param  array{instanceId: string, instanceLabel: string|null, isEnabled: bool, baseUrl: string|null, configError: string|null, calendarError: string|null, seriesError: string|null}  $result
+     * The `url` field exposed to the frontend is the public URL (or falls back
+     * to the internal URL if no public URL was configured).
+     *
+     * @param  array{instanceId: string, instanceLabel: string|null, isEnabled: bool, baseUrl: string|null, publicUrl: string|null, configError: string|null, calendarError: string|null, seriesError: string|null}  $result
      * @return array{id: string, label: string|null, enabled: bool, url: string|null, error: string|null}
      */
     private function buildSonarrStatus(array $result): array
@@ -292,7 +300,7 @@ final class CalendarAggregator
             'id' => $result['instanceId'],
             'label' => $result['instanceLabel'],
             'enabled' => $result['isEnabled'],
-            'url' => $result['baseUrl'],
+            'url' => $result['publicUrl'] ?? $result['baseUrl'],
             'error' => $error,
         ];
     }
@@ -407,15 +415,16 @@ final class CalendarAggregator
     /**
      * Transform raw Radarr API responses into CalendarEntry DTOs.
      *
-     * Now accepts per-instance parameters so entries from different Radarr
-     * instances carry distinct instanceId and instanceLabel values.
+     * The $publicUrl parameter is used to construct clickable links to
+     * media items in the Radarr web UI. This may differ from the internal
+     * API URL used by RadarrService for API calls.
      *
      * @param  array<int, array<string, mixed>>  $rawMovies
      * @return CalendarEntry[]
      */
     private function transformRadarrEntries(
         array $rawMovies,
-        string $baseUrl = '',
+        string $publicUrl = '',
         ?string $instanceId = null,
         ?string $instanceLabel = null,
     ): array {
@@ -439,7 +448,7 @@ final class CalendarAggregator
             $entries[] = CalendarEntry::fromRadarrResponse(
                 $movie,
                 $date,
-                $baseUrl,
+                $publicUrl,
                 $releaseType,
                 $instanceId,
                 $instanceLabel,
@@ -452,8 +461,9 @@ final class CalendarAggregator
     /**
      * Transform raw Sonarr API responses into CalendarEntry DTOs.
      *
-     * Now accepts per-instance parameters so entries from different Sonarr
-     * instances carry distinct instanceId and instanceLabel values.
+     * The $publicUrl parameter is used to construct clickable links to
+     * media items in the Sonarr web UI. This may differ from the internal
+     * API URL used by SonarrService for API calls.
      *
      * @param  array<int, array<string, mixed>>  $rawEpisodes
      * @param  array<int, string>  $seriesSlugs  Lookup map: seriesId → titleSlug
@@ -462,7 +472,7 @@ final class CalendarAggregator
      */
     private function transformSonarrEntries(
         array $rawEpisodes,
-        string $baseUrl = '',
+        string $publicUrl = '',
         array $seriesSlugs = [],
         array $seriesTitles = [],
         ?string $instanceId = null,
@@ -481,7 +491,7 @@ final class CalendarAggregator
             $entries[] = CalendarEntry::fromSonarrResponse(
                 $episode,
                 $dateStr,
-                $baseUrl,
+                $publicUrl,
                 $seriesSlugs,
                 $seriesTitles,
                 $instanceId,
