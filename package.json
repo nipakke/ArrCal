@@ -8,10 +8,9 @@
     "dev:php": "nodemon",
     "dev:frontend": "pnpm --filter arrcal-frontend dev",
     "dev:js": "pnpm dev:frontend",
-    "test": "vendor/bin/pest",
     "postinstall": "composer install",
     "build:frontend": "pnpm --filter arrcal-frontend build && mkdir -p public && cp -r frontend/dist/* public/",
-    "build:demo": "pnpm --filter arrcal-frontend build:demo && cp -r frontend/dist/* public/",
+    "build:demo": "pnpm --filter arrcal-frontend build:demo && mkdir -p public && cp -r frontend/dist/* public/",
     "bump": "bumpp --commit --no-tag"
   },
   "devDependencies": {
