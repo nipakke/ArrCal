@@ -1,5 +1,5 @@
 <div
-  class="min-h-16 md:min-h-24 bg-base-100 {isToday ? 'bg-primary/10' : ''} {!isCurrent ? 'opacity-40' : ''} relative overflow-hidden"
+  class="min-h-16 md:min-h-24 bg-base-100 {isToday ? 'bg-primary/10' : ''} {!isCurrent ? 'opacity-40' : ''} relative"
 >
   <!-- Day number behind entries -->
   <div
@@ -8,8 +8,8 @@
     {cell.day}
   </div>
 
-  <!-- Entries on top - fills entire cell so the whole cell is translucent -->
-    <div class="absolute inset-0 z-10 opacity-77 hover:opacity-100 transition-all duration-150 p-0.5">
+  <!-- Entries on top - natural flow so cell expands to fit all entries -->
+    <div class="relative z-10 opacity-77 hover:opacity-100 transition-all duration-150 p-0.5">
     <div class="space-y-0.5">
       {#each entries as entry}
         <EntryBadge {entry} />
