@@ -6,7 +6,7 @@ const isDemo = !!process.env.VITE_DEMO;
 
 export default defineConfig({
   plugins: [tailwindcss(), svelte()],
-  base: isDemo ? '/arrcal/' : '/',
+  base: isDemo ? '/ArrCal/' : '/',
   define: {
     'import.meta.env.VITE_DEMO': process.env.VITE_DEMO ? 'true' : 'false',
   },

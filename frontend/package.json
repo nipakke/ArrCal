@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:demo": "VITE_DEMO=true vite build --base=/arrcal/",
+    "build:demo": "VITE_DEMO=true vite build --base=/ArrCal/",
     "preview": "vite preview",
     "preview:demo": "VITE_DEMO=true vite build --base=/ && vite preview"
   },
