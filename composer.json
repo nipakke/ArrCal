@@ -20,13 +20,10 @@
     "optimize-autoloader": true,
     "preferred-install": "dist",
     "sort-packages": true,
-    "allow-plugins": {
-      "pestphp/pest-plugin": true
-    }
+    "allow-plugins": {}
   },
     "require-dev": {
         "laravel/pint": "^1.29",
-        "pestphp/pest": "^3.0",
         "php-parallel-lint/php-parallel-lint": "^1.4",
         "phpstan/phpstan": "^2.2"
     },
