@@ -1,0 +1,1 @@
+function e(){return{radarr:[{id:`radarr-hd`,label:`HD Movies`,enabled:!0,url:null,error:null},{id:`radarr-4k`,label:`4K Movies`,enabled:!0,url:null,error:null}],sonarr:[{id:`sonarr-main`,label:`Main TV`,enabled:!0,url:null,error:null},{id:`sonarr-anime`,label:`Anime TV`,enabled:!0,url:null,error:null}]}}export{e as getDemoConfig};
